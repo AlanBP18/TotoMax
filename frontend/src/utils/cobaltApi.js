@@ -53,9 +53,7 @@ export async function fetchCobaltDownloadUrl({
 
     for (const payload of payloads) {
       try {
-        const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(apiRoot)}`;
-        
-        const response = await fetch(proxyUrl, {
+        const response = await fetch(apiRoot, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
