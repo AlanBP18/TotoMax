@@ -21,7 +21,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('downloader');
   const [urlInput, setUrlInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    return typeof window !== 'undefined' ? window.innerWidth >= 768 : true;
+  });
 
   // History state
   const [historyItems, setHistoryItems] = useState(() => {
@@ -63,10 +65,19 @@ export default function App() {
   const handleSelectHistoryItem = (item) => {
     setUrlInput(item.url || '');
     setActiveTab('downloader');
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
   };
 
   return (
     <div className={`app-container ${sidebarOpen ? '' : 'sidebar-collapsed'}`}>
+      {sidebarOpen && (
+        <div 
+          className="sidebar-backdrop" 
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
       <Sidebar 
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -76,6 +87,9 @@ export default function App() {
         onNewDownload={() => {
           setUrlInput('');
           setActiveTab('downloader');
+          if (typeof window !== 'undefined' && window.innerWidth < 768) {
+            setSidebarOpen(false);
+          }
         }}
         onDeleteHistory={handleDeleteHistory}
         onSelectHistoryItem={handleSelectHistoryItem}

@@ -69,7 +69,7 @@ body {
 
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .sidebar {
-  width: 0;
+  width: 260px;
   margin-left: -260px;
   opacity: 0;
   border-right-color: transparent;
@@ -1010,6 +1010,215 @@ body {
 .double-slider-input:active::-moz-range-thumb {
   background-color: var(--accent-green);
 }
+
+/* Responsive and Sidebar Backdrop Styles */
+.sidebar-backdrop {
+  display: none;
+}
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  /* Sidebar Drawer styling for Mobile/Tablets */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    z-index: 100;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.45);
+    transform: translateX(0);
+    opacity: 1 !important;
+    transition: transform var(--transition-normal);
+  }
+  
+  .app-container.sidebar-collapsed .sidebar {
+    transform: translateX(-280px);
+    margin-left: 0 !important;
+    width: 280px !important;
+    opacity: 1 !important;
+    pointer-events: none;
+  }
+
+  /* Backdrop overlay */
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+    animation: backdropFadeIn var(--transition-normal) forwards;
+  }
+
+  /* Adjust Main Panel width on Mobile/Tablets */
+  .main-panel {
+    width: 100%;
+    flex: none;
+  }
+
+  /* Two-row header layout on Mobile/Tablets */
+  .main-header {
+    display: grid !important;
+    grid-template-areas: 
+      "brand status"
+      "tabs tabs" !important;
+    grid-template-columns: 1fr auto !important;
+    height: auto !important;
+    padding: 12px 16px !important;
+    gap: 12px !important;
+    align-items: center !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+  }
+  
+  .main-header > div:first-child {
+    grid-area: brand;
+    display: flex;
+    align-items: center;
+  }
+  
+  .main-header > .tabs-pill-container {
+    grid-area: tabs;
+    justify-self: center;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+  }
+
+  .main-header > .tabs-pill-container > .tab-pill {
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .main-header > div:last-child {
+    grid-area: status;
+    justify-self: end;
+  }
+
+  .main-content {
+    padding: 24px 16px 60px 16px;
+    gap: 28px;
+  }
+
+  .hero-section {
+    margin-top: 10px;
+    gap: 12px;
+  }
+
+  .hero-title {
+    font-size: 24px;
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
+    padding: 0 8px;
+  }
+
+  .suggestion-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .suggestion-card {
+    padding: 14px 16px;
+  }
+
+  .prompt-bar-chatgpt {
+    padding: 12px 14px;
+    border-radius: var(--radius-lg);
+  }
+
+  .options-panel-chatgpt {
+    gap: 12px;
+  }
+
+  .option-group {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .select-input, .segmented-control {
+    width: 100%;
+  }
+
+  .segmented-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  /* Trimmer components responsiveness */
+  .video-info-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .video-thumbnail-preview {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-element {
+    max-height: 240px;
+  }
+
+  .result-card {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .result-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  /* Sliders adaptation for touch devices */
+  .trim-range-input::-webkit-slider-thumb {
+    height: 24px !important;
+    width: 24px !important;
+    margin-top: -9px !important;
+  }
+  .trim-range-input::-moz-range-thumb {
+    height: 24px !important;
+    width: 24px !important;
+  }
+  .double-slider-container {
+    height: 32px !important;
+  }
+  .double-slider-input::-webkit-slider-thumb {
+    height: 28px !important;
+    width: 28px !important;
+  }
+  .double-slider-input::-moz-range-thumb {
+    height: 28px !important;
+    width: 28px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .options-panel-chatgpt {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .option-group {
+    width: 100%;
+  }
+}
+
 
 
 

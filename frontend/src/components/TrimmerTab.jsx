@@ -40,6 +40,39 @@ export default function TrimmerTab({ importedBlob, importedFilename, onAddToHist
     }
   }, [importedBlob, importedFilename]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      const mainPanel = document.querySelector('.main-panel');
+      if (mainPanel) {
+        if (fileUrl) {
+          mainPanel.scrollTo({
+            top: mainPanel.scrollHeight,
+            behavior: 'smooth'
+          });
+        } else {
+          mainPanel.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }, 150);
+  }, [fileUrl]);
+
+  useEffect(() => {
+    if (trimStatus !== 'idle') {
+      setTimeout(() => {
+        const mainPanel = document.querySelector('.main-panel');
+        if (mainPanel) {
+          mainPanel.scrollTo({
+            top: mainPanel.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      }, 150);
+    }
+  }, [trimStatus]);
+
   const checkIfAudio = (blob, name = '') => {
     const fileNameLower = (name || filename || '').toLowerCase();
     if (blob && blob.type.startsWith('audio/')) {

@@ -48,20 +48,6 @@ export default function UrlInput({
             <span className="suggestion-card-title">Extraer Audio MP3 🎵</span>
             <span className="suggestion-card-desc">Convierte y extrae el audio de cualquier video.</span>
           </div>
-          <div 
-            className="suggestion-card" 
-            onClick={() => setUrlInput('https://vimeo.com/76979871')}
-          >
-            <span className="suggestion-card-title">Probar Demo Vimeo 🌐</span>
-            <span className="suggestion-card-desc">Haz clic aquí para cargar una URL de prueba de Vimeo.</span>
-          </div>
-          <div 
-            className="suggestion-card" 
-            onClick={() => setUrlInput('https://x.com/SpaceX/status/1800000000000000000')}
-          >
-            <span className="suggestion-card-title">Clips de Redes (X/TikTok) 📱</span>
-            <span className="suggestion-card-desc">Soporte directo para hilos, tweets y reels.</span>
-          </div>
         </div>
       )}
 

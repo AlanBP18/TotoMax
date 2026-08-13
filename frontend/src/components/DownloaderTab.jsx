@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import UrlInput from './UrlInput';
 import ProgressBar from './ProgressBar';
 import { fetchCobaltDownloadUrl, downloadBlobFromUrl } from '../utils/cobaltApi';
@@ -17,6 +17,25 @@ export default function DownloaderTab({ onSendToTrimmer, urlInput, setUrlInput, 
   const [completedBlob, setCompletedBlob] = useState(null);
   const [completedBlobUrl, setCompletedBlobUrl] = useState(null);
   const [completedFilename, setCompletedFilename] = useState('');
+
+  useEffect(() => {
+    setTimeout(() => {
+      const mainPanel = document.querySelector('.main-panel');
+      if (mainPanel) {
+        if (downloadStatus === 'idle') {
+          mainPanel.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        } else {
+          mainPanel.scrollTo({
+            top: mainPanel.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }, 150);
+  }, [downloadStatus]);
 
   const handleStartDownload = async (url) => {
     setIsFetching(true);
