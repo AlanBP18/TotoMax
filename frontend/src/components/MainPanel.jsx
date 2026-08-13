@@ -1,79 +1,89 @@
-import React from 'react';
-import { ShieldCheck } from 'lucide-react';
-import UrlInput from './UrlInput';
-import MediaConfig from './MediaConfig';
-import ProgressBar from './ProgressBar';
-import SkeletonLoader from './SkeletonLoader';
+import React, { useState } from 'react';
+import DownloaderTab from './DownloaderTab';
+import TrimmerTab from './TrimmerTab';
+import { Download, Scissors, ShieldCheck, PanelLeft } from 'lucide-react';
 
-export default function MainPanel({
+export default function MainPanel({ 
+  sidebarOpen,
+  setSidebarOpen,
+  activeTab, 
+  setActiveTab,
   urlInput,
   setUrlInput,
-  isFetching,
-  videoData,
-  onFetchMetadata,
-  onStartDownload,
-  downloadStatus,
-  progressData,
-  completedFile,
-  onNewDownload
+  onAddToHistory
 }) {
+  const [importedBlob, setImportedBlob] = useState(null);
+  const [importedFilename, setImportedFilename] = useState('');
+
+  const handleSendToTrimmer = (blob, filename) => {
+    setImportedBlob(blob);
+    setImportedFilename(filename);
+    setActiveTab('trimmer');
+  };
+
   return (
     <main className="main-panel">
       {/* Header */}
       <header className="main-header">
-        <div className="brand-title">
-          <img src="/logo.png" alt="TotoMax Logo" style={{ height: '28px', objectFit: 'contain' }} />
-          <span>TotoMax Media Downloader</span>
-          <span className="brand-badge">SPA Netlify</span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {!sidebarOpen && (
+            <button 
+              type="button" 
+              className="sidebar-toggle" 
+              onClick={() => setSidebarOpen(true)}
+              title="Mostrar barra lateral"
+              style={{ marginRight: '12px' }}
+            >
+              <PanelLeft size={18} />
+            </button>
+          )}
+          <div className="brand-title">
+            <img src="/logo.png" alt="TotoMax Logo" style={{ height: '24px', objectFit: 'contain' }} />
+            <span>TotoMax Media</span>
+            <span className="brand-badge">Client API</span>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#c5c5d2' }}>
-          <ShieldCheck size={16} style={{ color: '#10a37f' }} />
-          <span>Cliente Estático</span>
+        
+        {/* Tabs Navigation (Pill Selector) */}
+        <div className="tabs-pill-container">
+          <button
+            type="button"
+            className={`tab-pill ${activeTab === 'downloader' ? 'active' : ''}`}
+            onClick={() => setActiveTab('downloader')}
+          >
+            <Download size={14} />
+            <span>Descargar URL</span>
+          </button>
+          <button
+            type="button"
+            className={`tab-pill ${activeTab === 'trimmer' ? 'active' : ''}`}
+            onClick={() => setActiveTab('trimmer')}
+          >
+            <Scissors size={14} />
+            <span>Recortar Medios</span>
+          </button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)' }}>
+          <ShieldCheck size={14} style={{ color: 'var(--accent-green)' }} />
+          <span>Local Safe</span>
         </div>
       </header>
 
-      {/* Main Container */}
+      {/* Main Content Area */}
       <div className="main-content">
-        {/* Hero Section if idle */}
-        {!videoData && !isFetching && (
-          <div className="hero-section">
-            <div className="hero-icon" style={{ background: 'transparent', border: 'none' }}>
-              <img src="/logo.png" alt="TotoMax Logo" style={{ height: '48px', objectFit: 'contain' }} />
-            </div>
-            <h1 className="hero-title">¿Qué enlace deseas descargar o recortar hoy?</h1>
-            <p className="hero-subtitle">
-              Pega cualquier URL de video o audio para extraer metadatos, seleccionar resoluciones o recortar fragmentos específicos con precisión.
-            </p>
-          </div>
-        )}
-
-        {/* ChatGPT Style URL Input Bar */}
-        <UrlInput
-          urlInput={urlInput}
-          setUrlInput={setUrlInput}
-          onFetchMetadata={onFetchMetadata}
-          isFetching={isFetching}
-        />
-
-        {/* Metadata Skeleton Loader */}
-        {isFetching && <SkeletonLoader />}
-
-        {/* Metadata Config Card */}
-        {videoData && downloadStatus === 'idle' && (
-          <MediaConfig
-            videoData={videoData}
-            onStartDownload={onStartDownload}
-            downloadStatus={downloadStatus}
+        {activeTab === 'downloader' ? (
+          <DownloaderTab 
+            onSendToTrimmer={handleSendToTrimmer}
+            urlInput={urlInput}
+            setUrlInput={setUrlInput}
+            onAddToHistory={onAddToHistory}
           />
-        )}
-
-        {/* Real-time Progress Bar or Completion Status */}
-        {(downloadStatus === 'downloading' || downloadStatus === 'completed') && (
-          <ProgressBar
-            progressData={progressData}
-            downloadStatus={downloadStatus}
-            completedFile={completedFile}
-            onNewDownload={onNewDownload}
+        ) : (
+          <TrimmerTab 
+            importedBlob={importedBlob} 
+            importedFilename={importedFilename} 
+            onAddToHistory={onAddToHistory}
           />
         )}
       </div>

@@ -1,7 +1,9 @@
 import React from 'react';
-import { Plus, Search, Trash2, Video, Music } from 'lucide-react';
+import { Plus, Search, Trash2, Video, Music, PanelLeftClose } from 'lucide-react';
 
 export default function Sidebar({
+  sidebarOpen,
+  setSidebarOpen,
   historyItems = [],
   searchQuery,
   onSearchChange,
@@ -15,11 +17,19 @@ export default function Sidebar({
 
   return (
     <aside className="sidebar">
-      {/* Header with New Download Button */}
+      {/* Header with New Download Button & Collapse Icon */}
       <div className="sidebar-header">
         <button type="button" className="btn-new-download" onClick={onNewDownload}>
           <Plus size={18} />
           <span>Nueva descarga</span>
+        </button>
+        <button 
+          type="button" 
+          className="sidebar-toggle"
+          onClick={() => setSidebarOpen(false)}
+          title="Cerrar barra lateral"
+        >
+          <PanelLeftClose size={18} />
         </button>
       </div>
 
@@ -30,7 +40,7 @@ export default function Sidebar({
           <input
             type="text"
             className="search-input"
-            placeholder="Buscar en el historial..."
+            placeholder="Buscar historial..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -40,13 +50,13 @@ export default function Sidebar({
       {/* History Items Container */}
       <div className="sidebar-history-container">
         <div className="history-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>Historial de Descargas</span>
-          <span style={{ fontSize: '10px', color: '#10a37f', fontWeight: 700 }}>{historyItems.length}/9 MAX</span>
+          <span>Historial</span>
+          <span style={{ fontSize: '10px', color: 'var(--accent-green)', fontWeight: 700 }}>{historyItems.length}/9 MAX</span>
         </div>
 
         {filteredHistory.length === 0 ? (
-          <div style={{ padding: '24px 12px', textAlign: 'center', color: '#8e8ea0', fontSize: '13px' }}>
-            No hay descargas registradas aún.
+          <div style={{ padding: '24px 12px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
+            No hay descargas registradas.
           </div>
         ) : (
           filteredHistory.map((item) => (
@@ -57,16 +67,16 @@ export default function Sidebar({
             >
               <div className="history-item-content">
                 {item.download_type === 'audio' ? (
-                  <Music size={16} style={{ color: '#3b82f6', flexShrink: 0 }} />
+                  <Music size={15} style={{ color: 'var(--accent-blue)', flexShrink: 0 }} />
                 ) : (
-                  <Video size={16} style={{ color: '#10a37f', flexShrink: 0 }} />
+                  <Video size={15} style={{ color: 'var(--accent-green)', flexShrink: 0 }} />
                 )}
-                <div style={{ overflow: 'hidden' }}>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   <div className="history-item-title">{item.title}</div>
                   <div className="history-item-sub">
                     <span className="format-badge">{item.format || 'mp4'}</span>
                     <span>{item.quality || 'HD'}</span>
-                    {item.mode === 'clip' && <span style={{ color: '#10a37f' }}>• Recortado</span>}
+                    {item.mode === 'clip' && <span style={{ color: 'var(--accent-green)' }}>• Recortado</span>}
                   </div>
                 </div>
               </div>
@@ -81,7 +91,7 @@ export default function Sidebar({
                     onDeleteHistory(item.id);
                   }}
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={13} />
                 </button>
               </div>
             </div>
@@ -91,8 +101,8 @@ export default function Sidebar({
 
       {/* Footer User Profile & Branded Logo */}
       <div className="sidebar-footer">
-        <div className="user-avatar logo-t-avatar" style={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
-          <img src="/logo.png" alt="TotoMax Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+        <div className="user-avatar logo-t-avatar" style={{ background: 'transparent', border: 'none', boxShadow: 'none', width: '28px', height: '28px' }}>
+          <img src="/logo.png" alt="TotoMax Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
         </div>
         <div className="user-info">
           <span className="user-name">TotoMax Media</span>

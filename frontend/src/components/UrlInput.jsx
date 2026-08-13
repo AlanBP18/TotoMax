@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import { Link2, ArrowUpRight, Clipboard, Sparkles } from 'lucide-react';
+import React from 'react';
+import { Link2, ArrowUp, Clipboard, Sparkles, Video, Music } from 'lucide-react';
 
-export default function UrlInput({ urlInput, setUrlInput, onFetchMetadata, isFetching }) {
+export default function UrlInput({ 
+  urlInput, setUrlInput, 
+  videoQuality, setVideoQuality,
+  audioFormat, setAudioFormat,
+  isAudioOnly, setIsAudioOnly,
+  format, setFormat,
+  onFetchMetadata, isFetching 
+}) {
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!urlInput.trim()) return;
@@ -10,9 +18,11 @@ export default function UrlInput({ urlInput, setUrlInput, onFetchMetadata, isFet
 
   const handlePaste = async () => {
     try {
-      const text = await navigator.clipboard.readText();
-      if (text) {
-        setUrlInput(text);
+      if (navigator.clipboard) {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          setUrlInput(text);
+        }
       }
     } catch (err) {
       console.warn('No se pudo acceder al portapapeles directamente:', err);
@@ -20,53 +30,159 @@ export default function UrlInput({ urlInput, setUrlInput, onFetchMetadata, isFet
   };
 
   return (
-    <div className="prompt-container">
-      <form onSubmit={handleSubmit} className="prompt-bar">
-        <Link2 size={20} style={{ color: '#8e8ea0', flexShrink: 0 }} />
-        
-        <input
-          type="url"
-          className="prompt-input"
-          placeholder="Pega la URL del video de YouTube o red social aquí..."
-          value={urlInput}
-          onChange={(e) => setUrlInput(e.target.value)}
-          disabled={isFetching}
-          required
-        />
-
-        {navigator.clipboard && !urlInput && (
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={handlePaste}
-            title="Pegar enlace del portapapeles"
-            style={{ marginRight: '4px' }}
+    <div className="prompt-wrapper">
+      {/* Suggestions Grid */}
+      {!urlInput && (
+        <div className="suggestion-grid" style={{ marginBottom: '24px' }}>
+          <div 
+            className="suggestion-card" 
+            onClick={() => setUrlInput('https://www.youtube.com/watch?v=aqz-KE-wZYw')}
           >
-            <Clipboard size={18} />
-          </button>
-        )}
+            <span className="suggestion-card-title">Descargar de YouTube 🎥</span>
+            <span className="suggestion-card-desc">Inserta un enlace para bajar en alta resolución.</span>
+          </div>
+          <div 
+            className="suggestion-card" 
+            onClick={() => { setIsAudioOnly(true); setAudioFormat('mp3'); }}
+          >
+            <span className="suggestion-card-title">Extraer Audio MP3 🎵</span>
+            <span className="suggestion-card-desc">Convierte y extrae el audio de cualquier video.</span>
+          </div>
+          <div 
+            className="suggestion-card" 
+            onClick={() => setUrlInput('https://vimeo.com/76979871')}
+          >
+            <span className="suggestion-card-title">Probar Demo Vimeo 🌐</span>
+            <span className="suggestion-card-desc">Haz clic aquí para cargar una URL de prueba de Vimeo.</span>
+          </div>
+          <div 
+            className="suggestion-card" 
+            onClick={() => setUrlInput('https://x.com/SpaceX/status/1800000000000000000')}
+          >
+            <span className="suggestion-card-title">Clips de Redes (X/TikTok) 📱</span>
+            <span className="suggestion-card-desc">Soporte directo para hilos, tweets y reels.</span>
+          </div>
+        </div>
+      )}
 
-        <button
-          type="submit"
-          className="btn-send"
-          disabled={!urlInput.trim() || isFetching}
-        >
-          {isFetching ? (
-            <>
-              <div className="spinner" />
-              <span>Procesando...</span>
-            </>
-          ) : (
-            <>
-              <span>Obtener</span>
-              <ArrowUpRight size={18} />
-            </>
+      {/* ChatGPT Style Input Bar */}
+      <form onSubmit={handleSubmit} className="prompt-bar-chatgpt">
+        <div className="prompt-input-row">
+          <Link2 size={18} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+          
+          <input
+            type="url"
+            className="prompt-input-chatgpt"
+            placeholder="Pega la URL del video o audio aquí..."
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            disabled={isFetching}
+            required
+          />
+
+          {navigator.clipboard && !urlInput && (
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={handlePaste}
+              title="Pegar enlace"
+            >
+              <Clipboard size={16} />
+            </button>
           )}
-        </button>
+
+          <button
+            type="submit"
+            className="btn-send-chatgpt"
+            disabled={!urlInput.trim() || isFetching}
+            title="Enviar enlace"
+          >
+            {isFetching ? (
+              <div className="spinner" style={{ width: '16px', height: '16px' }} />
+            ) : (
+              <ArrowUp size={18} />
+            )}
+          </button>
+        </div>
+
+        {/* Options Panel inside prompt area */}
+        <div className="options-panel-chatgpt">
+          {/* Content Type Selector */}
+          <div className="option-group">
+            <span className="option-label">Tipo</span>
+            <div className="segmented-control">
+              <button
+                type="button"
+                className={`segmented-btn ${!isAudioOnly ? 'active' : ''}`}
+                onClick={() => setIsAudioOnly(false)}
+              >
+                <Video size={13} />
+                <span>Video</span>
+              </button>
+              <button
+                type="button"
+                className={`segmented-btn ${isAudioOnly ? 'active' : ''}`}
+                onClick={() => setIsAudioOnly(true)}
+              >
+                <Music size={13} />
+                <span>Audio</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Format Selector */}
+          <div className="option-group">
+            <span className="option-label">Formato</span>
+            <select
+              className="select-input"
+              value={isAudioOnly ? audioFormat : format}
+              onChange={(e) => isAudioOnly ? setAudioFormat(e.target.value) : setFormat(e.target.value)}
+            >
+              {!isAudioOnly ? (
+                <>
+                  <option value="mp4">MP4</option>
+                  <option value="webm">WebM</option>
+                  <option value="ogg">Ogg</option>
+                </>
+              ) : (
+                <>
+                  <option value="mp3">MP3</option>
+                  <option value="wav">WAV</option>
+                  <option value="m4a">M4A (High Quality)</option>
+                </>
+              )}
+            </select>
+          </div>
+
+          {/* Resolution Selector */}
+          <div className="option-group">
+            <span className="option-label">{!isAudioOnly ? 'Resolución' : 'Calidad'}</span>
+            <select
+              className="select-input"
+              value={!isAudioOnly ? videoQuality : 'best'}
+              onChange={(e) => !isAudioOnly && setVideoQuality(e.target.value)}
+              disabled={isAudioOnly}
+            >
+              {!isAudioOnly ? (
+                <>
+                  <option value="max">Original (4K/1080p)</option>
+                  <option value="1080">1080p</option>
+                  <option value="720">720p</option>
+                  <option value="480">480p</option>
+                  <option value="360">360p</option>
+                </>
+              ) : (
+                <option value="best">Óptima original</option>
+              )}
+            </select>
+          </div>
+        </div>
       </form>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', marginTop: '10px', fontSize: '12px', color: '#8e8ea0' }}>
-        <Sparkles size={14} style={{ color: '#10a37f' }} />
-        <span>Soporta YouTube, Vimeo, TikTok, X (Twitter), Facebook e Instagram.</span>
+      
+      {/* Help text */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', marginTop: '14px', fontSize: '11px', color: 'var(--text-muted)' }}>
+        <Sparkles size={12} style={{ color: 'var(--accent-green)' }} />
+        <span>Soporta YouTube, Vimeo, TikTok, X, Instagram, Facebook y más.</span>
       </div>
     </div>
   );
